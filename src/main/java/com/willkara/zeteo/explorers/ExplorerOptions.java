@@ -17,6 +17,7 @@
 package com.willkara.zeteo.explorers;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,9 +26,7 @@ import java.util.List;
  * for any file types explicitly? Put in JUST the file type (mp3/java) not
  * (.mp3/.java) or null to search for every file-type.
  *
- * @author willkara  
- * William Karavites - wkaravites@gmail.com
- * http://willkara.com
+ * @author willkara William Karavites - wkaravites@gmail.com http://willkara.com
  */
 public class ExplorerOptions {
 
@@ -41,7 +40,7 @@ public class ExplorerOptions {
     /**
      * Which file extension should it look for? Leave it blank for every.
      */
-    private List<String> searchableFileExtension = null;
+    private List<String> searchableFileExtensions = null;
 
     public ExplorerOptions() {
     }
@@ -61,21 +60,15 @@ public class ExplorerOptions {
         this.directoryPath = directoryObject;
         return this;
     }
-    
+
     /**
-     * 
+     *
      * @param directoryPath the directoryPath to set as a String
      * @return {@link ExplorerOptions}
      */
-    public ExplorerOptions setSearchDirectory(String directoryPath){
+    public ExplorerOptions setSearchDirectory(String directoryPath) {
         this.directoryPath = new File(directoryPath);
         return this;
-    }
-
-    public enum FileTypes {
-        audio,
-        image,
-        general;
     }
 
     /**
@@ -97,8 +90,8 @@ public class ExplorerOptions {
     /**
      * @return the fileExtension
      */
-    public List<String> getSearchableFileExtension() {
-        return searchableFileExtension;
+    public List<String> getSearchableFileExtensions() {
+        return searchableFileExtensions;
     }
 
     /**
@@ -107,7 +100,36 @@ public class ExplorerOptions {
      * @return {@link ExplorerOptions}
      */
     public ExplorerOptions setSearchableFileExtension(List<String> extensions) {
-        this.searchableFileExtension = extensions;
+        this.searchableFileExtensions = extensions;
+        return this;
+    }
+
+    public enum FileType {
+
+        audio(new String[]{"mp3", "aac"}),
+        image(new String[]{"jpg", "jpeg", "png", "bmp"});
+
+        private String[] types;
+
+        FileType(String[] types) {
+            this.types = types;
+        }
+
+        public String[] types() {
+            return types;
+        }
+    }
+
+    public ExplorerOptions setSearchableFileType(String type) {
+
+        switch (type) {
+            case "audio":
+                this.searchableFileExtensions = Arrays.asList(FileType.audio.types());
+                break;
+            case "image":
+                this.searchableFileExtensions = Arrays.asList(FileType.image.types());
+                break;
+        }
         return this;
     }
 

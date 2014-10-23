@@ -23,9 +23,7 @@ import com.willkara.zeteo.explorers.ExplorerResult;
 /**
  * The main interface to the tool through the command line.
  *
- * @author willkara  
- * William Karavites - wkaravites@gmail.com
- * http://willkara.com
+ * @author willkara William Karavites - wkaravites@gmail.com http://willkara.com
  */
 public class Zeteo {
 
@@ -36,15 +34,14 @@ public class Zeteo {
      */
     public static void main(String[] args) {
         //stackoverflow.com/questions/7341683/parsing-arguments-to-a-java-command-line-program
-        ExplorerOptions eo = new ExplorerOptions("/Users/willkara/Development/");
-        Explorer wow = new Explorer();
-        eo.setRecursiveSearch(true);
+        ExplorerOptions eo = new ExplorerOptions();
+        eo.setRecursiveSearch(true).
+                setSearchDirectory("/Users/willkara/Development/NetBeansProjects");
+
+        Explorer wow = new Explorer(eo);
         ExplorerResult result = wow.search(eo);
-        
+
         result.getReport().exportToTerminal();
-        
-        
-        
 
     }
 

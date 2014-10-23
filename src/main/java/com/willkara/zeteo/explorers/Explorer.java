@@ -31,9 +31,11 @@ import org.apache.commons.io.FilenameUtils;
  */
 public class Explorer {
 
-    private static String directoryPathString;
-    private static Path directoryPath;
-    private static File directoryFileObject;
+    ExplorerOptions options;
+
+    public Explorer(ExplorerOptions eo) {
+        options = eo;
+    }
 
     /**
      * The public facing search method. Accepts an {@link ExplorerOptions}
@@ -44,7 +46,7 @@ public class Explorer {
      * for the directory.
      */
     public ExplorerResult search(ExplorerOptions exOptions) {
-        return new ExplorerResult(searcher(exOptions.getDirectoryObject().listFiles(), new ConcurrentHashMap<>(), exOptions));
+        return new ExplorerResult(searcher(exOptions.getDirectoryObject().listFiles(), new ConcurrentHashMap<>(), options));
     }
 
     /**
@@ -57,43 +59,52 @@ public class Explorer {
      * @param file_array An array containing the directory to be searched.
      * @param fileMap The Concurrent Hash Map that is passed through that gets
      * the file data added to it.
-     * @param exOptions The ExplorerOptions object for the current search.
+     * @param options The ExplorerOptions object for the current search.
      * @return The Concurrent Hash Map that contains the file information.
      */
-    private ConcurrentHashMap searcher(File[] file_array, ConcurrentHashMap fileMap, ExplorerOptions exOptions) {
+    private ConcurrentHashMap searcher(File[] file_array, ConcurrentHashMap fileMap, ExplorerOptions options) {
 
         for (final File f : file_array) {
-            if (f.isDirectory() && exOptions.useRecursiveSearch()) {
+            if (f.isDirectory() && options.useRecursiveSearch()) {
 
-                searcher(f.listFiles(), fileMap, exOptions);
+                searcher(f.listFiles(), fileMap, options);
 
             } else if (f.isFile()) {
                 String extension = FilenameUtils.getExtension(f.getName());
 
-                BaseFileType bft = new BaseFileType(f);
-                if (extension.equals("")) {
-                    extension = "N/A";
+                if (options.getSearchableFileExtensions() == null) {
+                    namer(f, fileMap);
+                } else if (options.getSearchableFileExtensions().contains(extension)) {
+                    namer(f, fileMap);
                 }
-
-                List<BaseFileType> nameList = (List<BaseFileType>) fileMap.get(extension);
-                // if list does not exist create it
-                if (nameList == null) {
-                    nameList = new ArrayList<>();
-                    nameList.add(bft);
-                    fileMap.put(extension, nameList);
-                    //System.out.println("Added new one to map.");
-                } else {
-                    // add if item is not already in list
-                    if (!nameList.contains(bft)) {
-                        nameList.add(bft);
-                    }
-                    //System.out.println("Added to map.");
-                }
-
             }
 
         }
+
         return fileMap;
+    }
+
+    public void namer(final File f, ConcurrentHashMap mapper) {
+
+        String extension = FilenameUtils.getExtension(f.getName());
+        BaseFileType bft = new BaseFileType(f);
+        if (extension.equals("")) {
+            extension = "N/A";
+        }
+        List<BaseFileType> nameList = (List<BaseFileType>) mapper.get(extension);
+        // if list does not exist create it
+        if (nameList == null) {
+            nameList = new ArrayList<>();
+            nameList.add(bft);
+            mapper.put(extension, nameList);
+            //System.out.println("Added new one to map.");
+        } else {
+            // add if item is not already in list
+            if (!nameList.contains(bft)) {
+                nameList.add(bft);
+            }
+            //System.out.println("Added to map.");
+        }
     }
 
 }
