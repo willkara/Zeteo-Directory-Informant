@@ -43,12 +43,7 @@ public class ExplorerOptions {
      */
     private List<String> searchableFileExtension = null;
 
-    /**
-     * For now, the only argument it needs is the path to search.
-     * @param path The path to search
-     */
-    public ExplorerOptions(String path) {
-        directoryPath = new File(path);
+    public ExplorerOptions() {
     }
 
     /**
@@ -60,9 +55,21 @@ public class ExplorerOptions {
 
     /**
      * @param directoryObject the directoryPath to set
+     * @return {@link ExplorerOptions}
      */
-    public void setDirectoryObject(File directoryObject) {
+    public ExplorerOptions setSearchDirectory(File directoryObject) {
         this.directoryPath = directoryObject;
+        return this;
+    }
+    
+    /**
+     * 
+     * @param directoryPath the directoryPath to set as a String
+     * @return {@link ExplorerOptions}
+     */
+    public ExplorerOptions setSearchDirectory(String directoryPath){
+        this.directoryPath = new File(directoryPath);
+        return this;
     }
 
     public enum FileTypes {
@@ -80,9 +87,11 @@ public class ExplorerOptions {
 
     /**
      * @param recursiveSearch the recursiveSearch to set
+     * @return {@link ExplorerOptions}
      */
-    public void setRecursiveSearch(boolean recursiveSearch) {
+    public ExplorerOptions setRecursiveSearch(boolean recursiveSearch) {
         this.recursiveSearch = recursiveSearch;
+        return this;
     }
 
     /**
@@ -95,9 +104,11 @@ public class ExplorerOptions {
     /**
      * @param extensions An array containing the file extensions you wish to
      * search for.
+     * @return {@link ExplorerOptions}
      */
-    public void setSearchableFileExtension(List<String> extensions) {
+    public ExplorerOptions setSearchableFileExtension(List<String> extensions) {
         this.searchableFileExtension = extensions;
+        return this;
     }
 
 }
